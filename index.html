@@ -1,77 +1,127 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on https://github.com/jonrohan -->
+<html>
 <head>
-	<meta charset="UTF-8">
-	<title>Unown Translator</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-	<style>
-	@font-face{
-	 font-family:"Unown";
-	 src:url(Unown.ttf);
-	}
-	#en_input{
-		font-size:20px;
-	}
-	#display_text{
-		font-family:Unown; font-size:50px;
-	}
-	.error{
-		background-color: #FFAAAA;
-	}
-	.ok{
-		background-color: #AAFFAA;
-	}
-	</style>
-	<script>
-	
-	$(document).ready(function(){
-		
-		$("#en_input").on("input",function(){
-			if(!$("#en_input").val().match(/^[A-Za-z ?!]*$/)){
-				$("#en_input").addClass("error").removeClass("ok");
-				$("#error_msg").addClass("error");
-			}else{
-				$("#en_input").addClass("ok").removeClass("error");
-				$("#error_msg").removeClass("error");
-				$("#display_text").val($("#en_input").val());
-				reset_canvas();
-			}
-		});
-		$("#font_size").on("change",function(){
-			$("#display_text").css("font-size",$("#font_size").val()+"px");
-			reset_canvas();
-		})
-		$("#canvas_width").on("change",function(){
-			reset_canvas();
-		})
-		$("#canvas_height").on("change",function(){
-			reset_canvas();
-		})
-		reset_canvas();
-	})
-	function reset_canvas(){
-		$("#canvas_container").html('<canvas width="'+$("#canvas_width").val()+'" height="'+$("#canvas_height").val()+'" style="border:1px solid #000000;" id="display_canvas"></canvas>');
-		var c = $("#display_canvas")[0];
-		var ctx = c.getContext("2d");
-		ctx.font = $("#font_size").val()+"px Unown";
-		ctx.fillText($("#en_input").val(),10,50);
-	}
-	</script>
-</head>
-<body>
-	<div id="error_msg">English only [A-Za-z ?!]</div>
-	text:<textarea id="en_input" type="text"></textarea>
-	<br />
-	font size:<input id="font_size" type="number" min="18" value="50">
-	<br />
-	canvas width:<input id="canvas_width" type="number" min="30" value="500">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-	canvas height:<input id="canvas_height" type="number" min="30" value="500">
-	<hr />
-	Output text:<br /><textarea disabled id="display_text"></textarea>
-	<br />
-	Output canvas: (You can right click and use "save as")<br /><div id="canvas_container">
-		
-	</div>
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/github-dark.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>Unown Translator</title>
+  <meta name="description" content="Just a html5 Unown Translator">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+  @font-face{
+   font-family:"Unown";
+   src:url(Unown.ttf);
+  }
+  #en_input{
+    font-size:20px;
+  }
+  #display_text{
+    font-family:Unown; font-size:50px;
+  }
+  .error{
+    background-color: #FFAAAA;
+  }
+  .ok{
+    background-color: #AAFFAA;
+  }
+  </style>
+  <script>
+  
+  $(document).ready(function(){
+    
+    $("#en_input").on("input",function(){
+      if(!$("#en_input").val().match(/^[A-Za-z ?!]*$/)){
+        $("#en_input").addClass("error").removeClass("ok");
+        $("#error_msg").addClass("error");
+      }else{
+        $("#en_input").addClass("ok").removeClass("error");
+        $("#error_msg").removeClass("error");
+        $("#display_text").val($("#en_input").val());
+        reset_canvas();
+      }
+    });
+    $("#font_size").on("change",function(){
+      $("#display_text").css("font-size",$("#font_size").val()+"px");
+      reset_canvas();
+    })
+    $("#canvas_width").on("change",function(){
+      reset_canvas();
+    })
+    $("#canvas_height").on("change",function(){
+      reset_canvas();
+    })
+    reset_canvas();
+  })
+  function reset_canvas(){
+    $("#canvas_container").html('<canvas width="'+$("#canvas_width").val()+'" height="'+$("#canvas_height").val()+'" style="border:1px solid #000000;" id="display_canvas"></canvas>');
+    var c = $("#display_canvas")[0];
+    var ctx = c.getContext("2d");
+    ctx.font = $("#font_size").val()+"px Unown";
+    ctx.fillText($("#en_input").val(),10,50);
+  }
+  </script>
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">Unown Translator</h1>
+    </header>
+    <div id="container">
+      <p class="tagline">Just a html5 Unown Translator</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/readper/UnownTranslator/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/readper/UnownTranslator/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/readper/UnownTranslator" class="code">View Unown Translator on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <div id="error_msg">English only [A-Za-z ?!]</div>
+          text:<textarea id="en_input" type="text"></textarea>
+          <br />
+          font size:<input id="font_size" type="number" min="18" value="50">
+          <br />
+          canvas width:<input id="canvas_width" type="number" min="30" value="500">
+
+          canvas height:<input id="canvas_height" type="number" min="30" value="500">
+          <hr />
+          Output text:<br /><textarea disabled id="display_text"></textarea>
+          <br />
+          Output canvas: (You can right click and use "save as")<br /><div id="canvas_container">
+    
+          </div>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/readper" class="avatar"><img src="https://avatars2.githubusercontent.com/u/11384126?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/readper">readper</a> maintains <a href="https://github.com/readper/UnownTranslator">Unown Translator</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/readper/UnownTranslator/tarball/master" class="tar">tar</a><a href="https://github.com/readper/UnownTranslator/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+  
 </body>
 </html>
