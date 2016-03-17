@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Unown Translator</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+	<style>
+	@font-face{
+	 font-family:"Unown";
+	 src:url(Unown.ttf);
+	}
+	#en_input{
+		font-size:20px;
+	}
+	#display_text{
+		font-family:Unown; font-size:50px;
+	}
+	.error{
+		background-color: #FFAAAA;
+	}
+	.ok{
+		background-color: #AAFFAA;
+	}
+	</style>
+	<script>
+	
+	$(document).ready(function(){
+		
+		$("#en_input").on("input",function(){
+			if(!$("#en_input").val().match(/^[A-Za-z ?!]*$/)){
+				$("#en_input").addClass("error").removeClass("ok");
+				$("#error_msg").addClass("error");
+			}else{
+				$("#en_input").addClass("ok").removeClass("error");
+				$("#error_msg").removeClass("error");
+				$("#display_text").val($("#en_input").val());
+				reset_canvas();
+			}
+		});
+		$("#font_size").on("change",function(){
+			$("#display_text").css("font-size",$("#font_size").val()+"px");
+			reset_canvas();
+		})
+		$("#canvas_width").on("change",function(){
+			reset_canvas();
+		})
+		$("#canvas_height").on("change",function(){
+			reset_canvas();
+		})
+		reset_canvas();
+	})
+	function reset_canvas(){
+		$("#canvas_container").html('<canvas width="'+$("#canvas_width").val()+'" height="'+$("#canvas_height").val()+'" style="border:1px solid #000000;" id="display_canvas"></canvas>');
+		var c = $("#display_canvas")[0];
+		var ctx = c.getContext("2d");
+		ctx.font = $("#font_size").val()+"px Unown";
+		ctx.fillText($("#en_input").val(),10,50);
+	}
+	</script>
+</head>
+<body>
+	<div id="error_msg">English only [A-Za-z ?!]</div>
+	text:<textarea id="en_input" type="text"></textarea>
+	<br />
+	font size:<input id="font_size" type="number" min="18" value="50">
+	<br />
+	canvas width:<input id="canvas_width" type="number" min="30" value="500">
+
+	canvas height:<input id="canvas_height" type="number" min="30" value="500">
+	<hr />
+	Output text:<br /><textarea disabled id="display_text"></textarea>
+	<br />
+	Output canvas: (You can right click and use "save as")<br /><div id="canvas_container">
+		
+	</div>
+</body>
+</html>
