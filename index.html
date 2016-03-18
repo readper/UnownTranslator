@@ -51,7 +51,7 @@
     });
 
     $("#en_input").on("input",function(){
-      if(!$("#en_input").val().match(/^[A-Za-z ?!]*$/)){
+      if(!$("#en_input").val().match(/^[A-Za-z ?!\n]*$/)){
         $("#en_input").addClass("error").removeClass("ok");
         $("#error_msg").addClass("error");
       }else{
@@ -79,7 +79,10 @@
     var ctx = c.getContext("2d");
     ctx.font = $("#font_size").val()+"px Unown";
     ctx.fillStyle = $('#colorSelector div').css('backgroundColor');
-    ctx.fillText($("#en_input").val(),10,50);
+    var lines = $("#en_input").val().split('\n');
+    var lineheight = $("#font_size").val();
+    for (var i = 0; i<lines.length; i++)
+      ctx.fillText(lines[i], 10, 50 + (i*lineheight) );
   }
   </script>
 </head>
