@@ -8,9 +8,13 @@
 
   <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
   <link rel="stylesheet" href="stylesheets/github-dark.css">
+  <!-- colorpicker from http://www.eyecon.ro/colorpicker/ -->
+  <link rel="stylesheet" media="screen" type="text/css" href="colorpicker/css/colorpicker.css" />
+  <link rel="stylesheet" media="screen" type="text/css" href="colorpicker/css/layout.css" />
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="colorpicker/js/colorpicker.js"></script>
   <script type="text/javascript" src="javascripts/script.js"></script>
-
+  
   <title>Unown Translator</title>
   <meta name="description" content="Just a html5 Unown Translator">
 
@@ -35,9 +39,17 @@
   }
   </style>
   <script>
-  
   $(document).ready(function(){
-    
+    $('#en_input').trigger('focus');
+
+    $('#colorSelector').ColorPicker({
+      color: '#000000',
+      onChange: function (hsb, hex, rgb) {
+        $('#colorSelector div').css('backgroundColor', '#' + hex);
+        reset_canvas();
+      }
+    });
+
     $("#en_input").on("input",function(){
       if(!$("#en_input").val().match(/^[A-Za-z ?!]*$/)){
         $("#en_input").addClass("error").removeClass("ok");
@@ -66,6 +78,7 @@
     var c = $("#display_canvas")[0];
     var ctx = c.getContext("2d");
     ctx.font = $("#font_size").val()+"px Unown";
+    ctx.fillStyle = $('#colorSelector div').css('backgroundColor');
     ctx.fillText($("#en_input").val(),10,50);
   }
   </script>
@@ -99,18 +112,28 @@
         </div>
         <article class="markdown-body">
           <div id="error_msg">English only [A-Za-z ?!]</div>
-          text:<textarea id="en_input" type="text"></textarea>
+          <section class="input_area">
+          input text:<textarea id="en_input" type="text"></textarea>
           <br />
           font size:<input id="font_size" type="number" min="18" value="50">
+          <br />
+          color:<div id="colorSelector"><div style="background-color: #000000"></div></div>
           <br />
           canvas width:<input id="canvas_width" type="number" min="30" value="500">
 
           canvas height:<input id="canvas_height" type="number" min="30" value="500">
+          </section>
           <hr />
+          <section class="output_area">
           Output text:<br /><textarea disabled id="display_text"></textarea>
           <br />
           Output canvas: (You can right click and use "save as")<br /><div id="canvas_container">
-    
+          </section>
+          <section class="credit_area">
+          colorpicker from <a target="_blank" href="http://www.eyecon.ro/colorpicker/">http://www.eyecon.ro/colorpicker/</a>
+          <br />
+          Unown Font from <a target="_blank" href="http://www.dafont.com/unown.font">http://www.dafont.com/unown.font</a>
+          </section>
           </div>
         </article>
       </div>
