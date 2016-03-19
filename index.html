@@ -14,6 +14,7 @@
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script type="text/javascript" src="colorpicker/js/colorpicker.js"></script>
   <script type="text/javascript" src="javascripts/script.js"></script>
+  <script type="text/javascript" src="javascripts/jquery.i18n.properties.min.js"></script>
   
   <title>Unown Translator</title>
   <meta name="description" content="Just a html5 Unown Translator">
@@ -39,6 +40,17 @@
   }
   #display_text{
     font-family:Unown; font-size:50px;
+    line-height: 50px;
+    color: black;
+  }
+  #lang{
+    float:right;
+  }
+  #save_canvas{
+    float:none;
+  }
+  #save_canvas span{
+    padding-left: 10px;
   }
   .error{
     background-color: #FFAAAA;
@@ -48,6 +60,7 @@
   }
   </style>
   <script>
+  var canvas_padding_left = 10;
   $(document).ready(function(){
     $('#en_input').trigger('focus');
 
@@ -55,6 +68,7 @@
       color: '#000000',
       onChange: function (hsb, hex, rgb) {
         $('#colorSelector div').css('backgroundColor', '#' + hex);
+        $("#display_text").css("color",'#' + hex);
         reset_canvas();
       }
     });
@@ -66,12 +80,12 @@
       }else{
         $("#en_input").addClass("ok").removeClass("error");
         $("#error_msg").removeClass("error");
-        $("#display_text").val($("#en_input").val());
+        $("#display_text").html($("#en_input").val().replace(/\n/g,"<br />"));
         reset_canvas();
       }
     });
     $("#font_size").on("change",function(){
-      $("#display_text").css("font-size",$("#font_size").val()+"px");
+      $("#display_text").css("font-size",$("#font_size").val()+"px").css("line-height",$("#font_size").val()+"px");
       reset_canvas();
     })
     $("#canvas_width").on("change",function(){
@@ -80,18 +94,67 @@
     $("#canvas_height").on("change",function(){
       reset_canvas();
     })
+    $("#save_canvas").on("click",function(){
+      downloadCanvas(this,"display_canvas","Unown.png");
+    })
+    
+    $('#lang_select').bind('change',function(){
+      change_lang($(this).val());
+    });
+
+    // auto detect language
+    change_lang("");
     reset_canvas();
   })
+  function change_lang(lang){
+    jQuery.i18n.properties({
+      name:'Index',
+      path:'i18n/',
+      mode:'map',
+      async:true,
+      language:lang,
+      callback: function() {
+        $('.i18n').each(function(){
+          $(this).html($.i18n.prop($(this).data('i18n_key')));
+        });
+        if(lang==''){
+          $('#lang_select').val($.i18n.normaliseLanguageCode());
+        }
+      }
+    });
+  }
   function reset_canvas(){
-    $("#canvas_container").html('<canvas width="'+$("#canvas_width").val()+'" height="'+$("#canvas_height").val()+'" style="border:1px solid #000000;" id="display_canvas"></canvas>');
+    var font_size = $("#font_size").val();
+    // get canvas size setting
+    var canvas_width = $("#canvas_width").val();
+    var canvas_height = $("#canvas_height").val();
+    // auto detect from span #display_text
+    if($('#auto_resize').prop('checked')){
+      canvas_width = $("#display_text").width() + canvas_padding_left*2;
+      canvas_height = $("#display_text").height() + font_size/2;
+      $("#canvas_width").val(canvas_width);
+      $("#canvas_height").val(canvas_height);
+    }
+    // reset canvas
+    $("#canvas_container").html('<canvas width="'+canvas_width+'" height="'+canvas_height+'" style="border:1px solid #000000;" id="display_canvas"></canvas>');
+    // draw text on canvas
     var c = $("#display_canvas")[0];
     var ctx = c.getContext("2d");
-    ctx.font = $("#font_size").val()+"px Unown";
+    // set font style
+    
+    ctx.font = font_size+"px Unown";
     ctx.fillStyle = $('#colorSelector div').css('backgroundColor');
+
     var lines = $("#en_input").val().split('\n');
-    var lineheight = $("#font_size").val();
-    for (var i = 0; i<lines.length; i++)
-      ctx.fillText(lines[i], 10, 50 + (i*lineheight) );
+    
+    for (var i = 0; i<lines.length; i++){
+      ctx.fillText(lines[i], canvas_padding_left, ( (i+1)*font_size) );
+    }
+    
+  }
+  function downloadCanvas(link, canvasId, filename) {
+      link.href = document.getElementById(canvasId).toDataURL();
+      link.download = filename;
   }
   </script>
 </head>
@@ -123,30 +186,51 @@
         <span class="blc"></span><span class="trc"></span>
         </div>
         <article class="markdown-body">
-          <div id="error_msg">English only [A-Za-z ?!]</div>
+          <div id="lang">
+            Language: 
+            <select id="lang_select">
+              <option value="en_US">English</option>
+              <option value="zh_TW">正體中文</option>
+            </select>
+          </div>
           <section class="input_area">
-          input text:<textarea id="en_input" type="text"></textarea>
+            <h4><span class="i18n" data-i18n_key="title_input">Input</span></h4>
+          <span class="i18n" data-i18n_key="input_text">input text: </span><br /><textarea id="en_input" type="text"></textarea>
           <br />
-          font size:<input id="font_size" type="number" min="18" value="50">
+          <span id="error_msg" class="i18n" data-i18n_key="en_only">English only [A-Za-z ?!]</span>
           <br />
-          color:<div id="colorSelector"><div style="background-color: #000000"></div></div>
           <br />
-          canvas width:<input id="canvas_width" type="number" min="30" value="500">
+          <span class="i18n" data-i18n_key="font_size">font size: </span><input id="font_size" type="number" min="18" value="50">
+          <br />
+          <span class="i18n" data-i18n_key="color">color: </span><div id="colorSelector"><div style="background-color: #000000"></div></div>
+          <br />
+          <span class="i18n" data-i18n_key="auto_resize">auto resize: </span><input id="auto_resize" type="checkbox" checked="1"><br />
+          <span class="i18n" data-i18n_key="canvas_width">canvas width: </span><input id="canvas_width" type="number" min="30" value="500">
 
-          canvas height:<input id="canvas_height" type="number" min="30" value="500">
+          <span class="i18n" data-i18n_key="canvas_height">canvas height: </span><input id="canvas_height" type="number" min="30" value="500">
           </section>
           <hr />
           <section class="output_area">
-          Output text:<br /><textarea disabled id="display_text"></textarea>
+            <h4><span class="i18n" data-i18n_key="title_output">Output</span></h4>
           <br />
-          Output canvas: (You can right click and use "save as")<br /><div id="canvas_container">
+          <span class="i18n" data-i18n_key="output_text">Output text: </span><br /><span id="display_text"></span>
+          <br />
+          <span class="i18n" data-i18n_key="output_canvas">Output canvas: </span><br /><div id="canvas_container">
+          </div>
+          <a id="save_canvas" class="download-button" href="javascript:;"><span class="i18n" data-i18n_key="save_image">Save Image</span></a>
           </section>
+          <hr />
           <section class="credit_area">
+            <h4><span class="i18n" data-i18n_key="title_credit">Credits</span></h4>
           colorpicker from <a target="_blank" href="http://www.eyecon.ro/colorpicker/">http://www.eyecon.ro/colorpicker/</a>
           <br />
           Unown Font from <a target="_blank" href="http://www.dafont.com/unown.font">http://www.dafont.com/unown.font</a>
+          <br />
+          js downloadCanvas function from <a target="_blank" href="http://jsfiddle.net/softvar/5hnyf/">http://jsfiddle.net/softvar/5hnyf/</a>
+          <br />
+          i18n from <a target="_blank" href="https://github.com/jquery-i18n-properties/jquery-i18n-properties">https://github.com/jquery-i18n-properties/jquery-i18n-properties</a>
           </section>
-          </div>
+          
         </article>
       </div>
     </div>
